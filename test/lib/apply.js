@@ -116,4 +116,18 @@ describe('apply', function() {
       {a: {bb: {}}}
     );
   });
+
+  it('should not allow tampering of the target object prototype', function() {
+    assert.throws(() => apply({}, JSON.parse('{"__proto__": {"polluted":"yep"}}')),
+      TypeError,
+      'Cannot add property polluted, object is not extensible'
+    );
+  });
+
+  it('should not allow tampering of the target sub-object prototypes', function() {
+    assert.throws(() => apply({'test': {'x': 'y'}}, JSON.parse('{"test":{"__proto__": {"polluted":"yep"}}}')),
+      TypeError,
+      'Cannot add property polluted, object is not extensible'
+    );
+  });
 });
